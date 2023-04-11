@@ -9,13 +9,11 @@ import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
 public final class ContainerEngineSession implements AutoCloseable {
 
     private final DockerClient dockerClient;
-    private final Map<ImageReference, InspectImageResponse> imageInfoCache = new HashMap<>();
 
     public ContainerEngineSession(DockerClient dockerClient) {
         this.dockerClient = dockerClient;
@@ -41,9 +39,8 @@ public final class ContainerEngineSession implements AutoCloseable {
         cmd.exec(new PullImageResultCallback()).awaitCompletion();
     }
 
-    public ImageVerifier imageVerifier(ImageReference reference) {
-        InspectImageResponse data = imageInfoCache.computeIfAbsent(reference, this::fetchImageInfo);
-        return new ImageVerifier(data);
+    public void verifyImage(ImageReference reference, Consumer<InspectImageResponse> consumer) {
+        consumer.accept(fetchImageInfo(reference));
     }
 
     private InspectImageResponse fetchImageInfo(ImageReference reference) {

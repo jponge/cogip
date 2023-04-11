@@ -13,8 +13,7 @@ class ImageVerifierTest {
         try (ContainerEngineSession session = new ContainerEngineSession()) {
             var ref = new Reference("docker.io", "library/hello-world", "linux");
             session.pullImage(ref);
-            ImageVerifier imageVerifier = session.imageVerifier(ref);
-            imageVerifier.verify(img -> {
+            session.verifyImage(ref, img -> {
                 ContainerConfig conf = img.getConfig();
                 RootFS rootFS = img.getRootFS();
                 assertThat(img.getOs()).isEqualTo("linux");
