@@ -11,7 +11,7 @@ class ImageVerifierTest {
     @Test
     void smoke_test() throws Exception {
         try (ContainerEngineSession session = new ContainerEngineSession()) {
-            var ref = new Reference("docker.io", "library/hello-world", "latest");
+            var ref = new Reference("docker.io", "library/hello-world", "linux");
             session.pullImage(ref);
             ImageVerifier imageVerifier = session.imageVerifier(ref);
             imageVerifier.verify(img -> {
